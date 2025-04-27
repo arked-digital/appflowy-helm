@@ -3,6 +3,7 @@ global:
   scheme: "http"
   appflowyBaseUrl: "http://localhost"
   rustLog: "info"
+  namespace: "appflowy"
 
 nameOverride: ""
 fullnameOverride: ""

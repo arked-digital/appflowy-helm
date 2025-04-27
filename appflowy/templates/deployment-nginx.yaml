@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "appflowy-cloud.fullname" . }}-nginx
+  namespace: {{ .Values.global.namespace }}
   labels:
     {{- include "appflowy-cloud.labels" . | nindent 4 }}
     app.kubernetes.io/component: nginx
@@ -16,6 +17,7 @@ spec:
       labels:
         app.kubernetes.io/component: nginx
         {{- include "appflowy-cloud.selectorLabels" . | nindent 8 }}
+      namespace: {{ .Values.global.namespace }}
     spec:
       containers:
         - name: nginx

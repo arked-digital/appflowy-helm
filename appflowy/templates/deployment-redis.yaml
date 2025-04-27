@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "appflowy-cloud.fullname" . }}-redis
+  namespace: {{ .Values.global.namespace }}
   labels:
     {{- include "appflowy-cloud.labels" . | nindent 4 }}
     app.kubernetes.io/component: redis
@@ -13,6 +14,7 @@ spec:
       {{- include "appflowy-cloud.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      namespace: {{ .Values.global.namespace }}
       labels:
         app.kubernetes.io/component: redis
         {{- include "appflowy-cloud.selectorLabels" . | nindent 8 }}

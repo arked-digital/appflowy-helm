@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: {{ .Values.global.namespace }}
   name: {{ include "appflowy-cloud.fullname" . }}-gotrue
   labels:
     {{- include "appflowy-cloud.labels" . | nindent 4 }}
@@ -13,6 +14,7 @@ spec:
       {{- include "appflowy-cloud.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      namespace: {{ .Values.global.namespace }}
       labels:
         app.kubernetes.io/component: gotrue
         {{- include "appflowy-cloud.selectorLabels" . | nindent 8 }}

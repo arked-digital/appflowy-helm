@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  namespace: {{ .Values.global.namespace }}
   name: {{ include "appflowy-cloud.fullname" . }}-nginx-config
   labels:
     {{- include "appflowy-cloud.labels" . | nindent 4 }}
