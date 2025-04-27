@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  appflowy:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-04-27T12:46:40.042399979Z"
+    description: A Helm chart for Kubernetes
+    digest: 89f5e797822d6ba49b0e54af0a73999947ab31759188929ba0bca0b6adde8aa1
+    name: appflowy
+    type: application
+    urls:
+    - https://arked-digital.github.io/appflowy-helm/appflowy-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-04-27T12:46:40.041502275Z"
