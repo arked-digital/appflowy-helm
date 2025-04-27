@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "appflowy-cloud.fullname" . }}-minio
+  labels:
+    {{- include "appflowy-cloud.labels" . | nindent 4 }}
+    app.kubernetes.io/component: minio
+spec:
+  type: ClusterIP
+  ports:
+    - name: api
+      port: {{ .Values.minio.apiPort }}
+      targetPort: api
+    - name: console
+      port: {{ .Values.minio.consolePort }}
+      targetPort: console
+  selector:
+    app.kubernetes.io/component: minio
+    {{- include "appflowy-cloud.selectorLabels" . | nindent 4 }}

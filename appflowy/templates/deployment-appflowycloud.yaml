@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "appflowy-cloud.fullname" . }}-appflowycloud
+  labels:
+    {{- include "appflowy-cloud.labels" . | nindent 4 }}
+    app.kubernetes.io/component: appflowycloud
+spec:
+  replicas: {{ .Values.appflowyCloud.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: appflowycloud
+      {{- include "appflowy-cloud.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: appflowycloud
+        {{- include "appflowy-cloud.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: appflowycloud
+          image: {{ .Values.appflowyCloud.image }}
+          ports:
+            - containerPort: {{ .Values.appflowyCloud.port }}
+              name: appflowycloud
+          env:
+            {{- range $key, $value := .Values.appflowyCloud.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.appflowyCloud.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.appflowyCloud.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          resources:
+            {{- toYaml .Values.appflowyCloud.resources | nindent 12 }}

@@ -1,0 +1,143 @@
+global:
+  fqdn: "localhost"
+  scheme: "http"
+  appflowyBaseUrl: "http://localhost"
+  rustLog: "info"
+
+nameOverride: ""
+fullnameOverride: ""
+
+nginx:
+  image: nginx
+  replicaCount: 1
+  ports:
+    http: 80
+    https: 443
+  configMount:
+    enabled: true
+    path: /etc/nginx/nginx.conf
+    subPath: nginx.conf
+  sslSecret:
+    enabled: true
+    name: nginx-ssl
+  resources: {}
+
+postgres:
+  image: pgvector/pgvector:pg16
+  replicaCount: 1
+  host: postgres
+  user: postgres
+  password: password
+  port: 5432
+  db: postgres
+  persistence:
+    enabled: true
+    storageClass: "" # (optional) specify if needed
+    size: 10Gi
+  resources: {}
+
+redis:
+  image: redis
+  replicaCount: 1
+  host: redis
+  port: 6379
+  persistence:
+    enabled: false
+  resources: {}
+
+minio:
+  image: minio/minio
+  replicaCount: 1
+  consolePort: 9001
+  apiPort: 9000
+  rootUser: minioadmin
+  rootPassword: minioadmin
+  persistence:
+    enabled: true
+    storageClass: "" # (optional)
+    size: 10Gi
+  resources: {}
+
+gotrue:
+  image: appflowyinc/gotrue:latest
+  replicaCount: 1
+  port: 9999
+  env:
+    GOTRUE_ADMIN_EMAIL: "admin@example.com"
+    GOTRUE_ADMIN_PASSWORD: "password"
+    GOTRUE_DISABLE_SIGNUP: "false"
+    GOTRUE_SITE_URL: "appflowy-flutter://"
+    GOTRUE_URI_ALLOW_LIST: "**"
+    GOTRUE_JWT_SECRET: "hello456"
+    GOTRUE_JWT_EXP: "7200"
+    GOTRUE_DB_DRIVER: "postgres"
+    API_EXTERNAL_URL: "http://localhost/gotrue"
+    DATABASE_URL: "postgres://supabase_auth_admin:root@postgres:5432/postgres"
+    PORT: "9999"
+    GOTRUE_SMTP_HOST: "smtp.gmail.com"
+    GOTRUE_SMTP_PORT: "465"
+    GOTRUE_SMTP_USER: "email_sender@some_company.com"
+    GOTRUE_SMTP_PASS: "email_sender_password"
+    GOTRUE_SMTP_ADMIN_EMAIL: "comp_admin@some_company.com"
+    # OAuth and SAML disabled by default, can be added here later
+  resources: {}
+
+appflowyCloud:
+  image: appflowyinc/appflowy_cloud:latest
+  replicaCount: 1
+  port: 8000
+  env:
+    RUST_LOG: "info"
+    APPFLOWY_ENVIRONMENT: "production"
+    APPFLOWY_DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres"
+    APPFLOWY_REDIS_URI: "redis://redis:6379"
+    APPFLOWY_GOTRUE_JWT_SECRET: "hello456"
+    APPFLOWY_GOTRUE_JWT_EXP: "7200"
+    APPFLOWY_GOTRUE_BASE_URL: "http://gotrue:9999"
+    APPFLOWY_GOTRUE_EXT_URL: "http://localhost/gotrue"
+    APPFLOWY_GOTRUE_ADMIN_EMAIL: "admin@example.com"
+    APPFLOWY_GOTRUE_ADMIN_PASSWORD: "password"
+    APPFLOWY_ACCESS_CONTROL: "true"
+    APPFLOWY_DATABASE_MAX_CONNECTIONS: "40"
+  resources: {}
+
+adminFrontend:
+  image: appflowyinc/admin_frontend:latest
+  replicaCount: 1
+  port: 3000
+  env:
+    RUST_LOG: "info"
+    ADMIN_FRONTEND_REDIS_URL: "redis://redis:6379"
+    ADMIN_FRONTEND_GOTRUE_URL: "http://gotrue:9999"
+    ADMIN_FRONTEND_APPFLOWY_CLOUD_URL: "http://appflowy_cloud:8000"
+    ADMIN_FRONTEND_PATH_PREFIX: "/console"
+  resources: {}
+
+ai:
+  image: appflowyinc/appflowy_ai:latest
+  replicaCount: 1
+  port: 5001
+  env:
+    OPENAI_API_KEY: ""
+    APPFLOWY_AI_SERVER_PORT: "5001"
+    APPFLOWY_AI_DATABASE_URL: "postgresql+psycopg://postgres:password@postgres:5432/postgres"
+    APPFLOWY_AI_REDIS_URL: "redis://redis:6379"
+  resources: {}
+
+appflowyWorker:
+  image: appflowyinc/appflowy_worker:latest
+  replicaCount: 1
+  env:
+    RUST_LOG: "info"
+    APPFLOWY_ENVIRONMENT: "production"
+    APPFLOWY_WORKER_REDIS_URL: "redis://redis:6379"
+    APPFLOWY_WORKER_DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres"
+    APPFLOWY_WORKER_DATABASE_NAME: "postgres"
+    APPFLOWY_WORKER_IMPORT_TICK_INTERVAL: "30"
+  resources: {}
+
+appflowyWeb:
+  image: appflowyinc/appflowy_web:latest
+  replicaCount: 1
+  port: 80
+  resources: {}

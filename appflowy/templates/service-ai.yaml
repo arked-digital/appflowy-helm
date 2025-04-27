@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "appflowy-cloud.fullname" . }}-ai
+  labels:
+    {{- include "appflowy-cloud.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ai
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.ai.port }}
+      targetPort: ai
+      name: ai
+  selector:
+    app.kubernetes.io/component: ai
+    {{- include "appflowy-cloud.selectorLabels" . | nindent 4 }}

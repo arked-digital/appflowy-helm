@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "appflowy-cloud.fullname" . }}-adminfrontend
+  labels:
+    {{- include "appflowy-cloud.labels" . | nindent 4 }}
+    app.kubernetes.io/component: adminfrontend
+spec:
+  replicas: {{ .Values.adminFrontend.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: adminfrontend
+      {{- include "appflowy-cloud.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: adminfrontend
+        {{- include "appflowy-cloud.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: adminfrontend
+          image: {{ .Values.adminFrontend.image }}
+          ports:
+            - containerPort: {{ .Values.adminFrontend.port }}
+              name: adminfrontend
+          env:
+            {{- range $key, $value := .Values.adminFrontend.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.adminFrontend.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 5
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.adminFrontend.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          resources:
+            {{- toYaml .Values.adminFrontend.resources | nindent 12 }}

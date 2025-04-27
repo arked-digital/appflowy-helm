@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "appflowy-cloud.fullname" . }}-adminfrontend
+  labels:
+    {{- include "appflowy-cloud.labels" . | nindent 4 }}
+    app.kubernetes.io/component: adminfrontend
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.adminFrontend.port }}
+      targetPort: adminfrontend
+      name: adminfrontend
+  selector:
+    app.kubernetes.io/component: adminfrontend
+    {{- include "appflowy-cloud.selectorLabels" . | nindent 4 }}
