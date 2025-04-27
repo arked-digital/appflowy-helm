@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'appflowy-cloud/**'
-      - '.github/workflows/helm-publish.yml'
+      - 'appflowy/**'
+      - '.github/workflows/helm-publish.yaml'
 
 jobs:
   publish-helm-chart:
@@ -24,15 +24,15 @@ jobs:
         version: v3.12.1
 
     - name: Lint Helm Chart
-      run: helm lint ./appflowy-cloud
+      run: helm lint ./appflowy
 
     - name: Template Helm Chart (validate)
-      run: helm template appflowy-cloud ./appflowy-cloud
+      run: helm template appflowy ./appflowy
 
     - name: Package Helm Chart
       run: |
         mkdir -p packaged
-        helm package ./appflowy-cloud -d packaged/
+        helm package ./appflowy -d packaged/
 
     - name: Update Helm Repo Index
       run: |
